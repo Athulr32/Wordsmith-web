@@ -12,8 +12,9 @@ const { verify } = require("../verify")
 
 
 
-router.use(verify, async (req, res) => {
+router.use(async (req, res) => {
 
+    
     const token = req.token
     console.log(token)
     const decodedToken = jwt.decode(token)

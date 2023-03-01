@@ -8,44 +8,124 @@ import Router from "next/router";
 import Interest from "../Interest.jsx";
 import Login from "@/components/Auth/Login.jsx";
 import SignUp from "@/components/Auth/SignUp.jsx"
+import { setCookie } from 'cookies-next';
 
-export default function SignIn() {
+export default function SignIn({ lang }) {
+
+    const [details, setDetails] = useState({
+        firstName:"",
+        lastName:"",
+        email:"",
+        password:""
+    })
+
+
+
 
 
     const [toLogin, setToLoginIn] = useState(false);
     const [popUp, setPopUp] = useState(false);
 
+
     function setLogin() {
 
         setToLoginIn(true)
+        setPopUp(false)
+    }
+
+    function setLoginOff() {
+
+        setToLoginIn(false);
     }
 
 
-    function loginHandler() {
+    async function loginHandler(e) {
 
+        e.preventDefault()
         //Check credential is correct
+        const email = e.target["0"].value;
+        const password = e.target["1"].value;
 
-        Router.push("/landing")
+
+        const loginRequest = await fetch("http://localhost:4000/login", {
+            headers: {
+                "Content-Type": "application/json",
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            method: "POST",
+            body: JSON.stringify({
+                email,
+                password
+            }),
+
+        })
+
+        const userLogin = await loginRequest.json();
+        console.log(userLogin)
+        if (userLogin.flag == true) {
+            setCookie("token", userLogin.token)
+            Router.push("/landing")
+        }
+        else {
+            console.log("invalid")
+        }
+
+
 
     }
 
-    function popUpHandler(e) {
+    async function popUpHandler(e) {
 
         e.preventDefault()
         //Check credentials are correct
         // setPopUp(true)
-        console.log(e.target);
+        const firstName = e.target["0"].value;
+        const lastName = e.target["1"].value;
+        const email = e.target["2"].value;
+        const password = e.target["3"].value;
+
+
+        setDetails({
+            firstName,
+            lastName,
+            email,
+            password
+        })
+
+        console.log("Wokrs")
+        // const registerRequest = await fetch("http://localhost:4000/register", {
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //         // 'Content-Type': 'application/x-www-form-urlencoded',
+        //     },
+        //     method: "POST",
+        //     body: JSON.stringify({
+        //         firstName,
+        //         lastName,
+        //         email,
+        //         password
+        //     }),
+
+        // })
+
+        // const userRegsiter = await registerRequest.json();
+
+        // if (userRegsiter.flag === true) {
+        //     setPopUp(true);
+        // }
+
+        setPopUp(true);
     }
 
     return (
         <>
 
             {popUp && <div className={styles.modal}></div>}
-            
+
             {
                 popUp && <div style={{ position: "absolute", left: "700px", zIndex: 2 }}>
 
-                    <Interest></Interest>
+                    <Interest setLogin={setLogin} details={details}></Interest>
                 </div>
             }
 
@@ -58,13 +138,11 @@ export default function SignIn() {
                         <div style={{ fontSize: "10px", position: "relative", left: "10px" }}>Wordsmith</div>
                     </div>
 
-                    {!toLogin && <SignUp setLogin={setLogin} popUpHandler={popUpHandler}></SignUp>
-                        
+                    {!toLogin && <SignUp  setLogin={setLogin} popUpHandler={popUpHandler} lang={lang}></SignUp>
+
                     }
 
-
-
-                    {toLogin && <div > <Login loginHandler={loginHandler}></Login></div>}
+                    {toLogin && <div > <Login setLoginOff={setLoginOff} loginHandler={loginHandler}></Login></div>}
 
 
 

@@ -1,24 +1,30 @@
-
+const { body, validationResult } = require('express-validator');
 
 
 const { wordsSchema, User } = require("../model.js");
-const express = require('express')
+const express = require('express');
+
 const router = express.Router()
 
 router.use(async (req, res) => {
 
 
+
+
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName
     const email = req.body.email;
     const password = req.body.password;
-    console.log(email, password)
+    const topics = req.body.topics
 
+    console.log(topics)
     const user = new User({
-        email, password
+        firstName, lastName, email, password
     })
 
     const UserWords = new wordsSchema({
         email,
-        topics: [],
+        topics: [...topics],
         knownWords: [],
         easy: 0,
         medium: 0,
@@ -28,6 +34,7 @@ router.use(async (req, res) => {
     const finding = await User.findOne({ email })
 
     console.log(finding)
+
     if (finding === null) {
 
         user.save().then(data => {
@@ -43,7 +50,7 @@ router.use(async (req, res) => {
 
     }
     else {
-        console.log("hehe")
+
         res.status(400).json({
             data: "User already available",
             flag: false

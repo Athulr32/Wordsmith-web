@@ -1,9 +1,59 @@
 
+import { useEffect, useState } from "react";
+import { getCookie } from "cookies-next";
+import Router from "next/router";
+
+export default function SignUp({ setLogin, popUpHandler, lang,details }) {
+
+    const [wordArr, setWordArr] = useState(["Create an Account", "Already have an account?", "Login",])
+
+
+    useEffect(() => {
+
+        const token = getCookie("token");
+        console.log(token)
+        if (token) {
+            fetch("http://localhost:4000/verify", {
+                headers: {
+                    "Content-Type": "application/json",
+
+                },
+                method: "POST",
+                body: JSON.stringify({
+                    token
+                })
+            }).then((res) => {
+                return res.json();
+            }).then((data) => {
+
+                if (data.flag === true) {
+                    Router.push("/landing")
+                }
+            })
+        }
+
+
+        // fetch("http://localhost:4000/translate", {
+        //     headers: {
+        //         "Content-Type": "application/json",
+
+        //     },
+        //     method: "POST",
+        //     body: JSON.stringify({
+        //         words:wordArr,
+        //         lang:"hi"
+        //     })
+        // }).then((res) => {
+        //     return res.json();
+        // }).then((data) => {
+
+        //     setWordArr(data)
+        // })
 
 
 
-export default function SignUp({setLogin,popUpHandler,}) {
 
+    }, [])
 
 
     return (
@@ -12,10 +62,10 @@ export default function SignUp({setLogin,popUpHandler,}) {
 
             <div className="py-8">
                 <div>
-                    <h1 style={{ fontSize: "30px", fontWeight: "bold", padding: "2px 2px 2px 0px" }}>Create an Account</h1>
+                    <h1 style={{ fontSize: "30px", fontWeight: "bold", padding: "2px 2px 2px 0px" }}>{wordArr[0]}</h1>
                 </div>
                 <div>
-                    Already have an account? <span onClick={setLogin}>Login</span>
+                    {wordArr[1]} <span style={{ cursor: "pointer" }} onClick={setLogin}>{wordArr[2]}</span>
                 </div>
                 <div style={{ padding: "10px 0px 10px 0px" }}>
                     Social Login
@@ -24,7 +74,7 @@ export default function SignUp({setLogin,popUpHandler,}) {
                     <span style={{ display: "inline-block", width: "200px", height: "2px", backgroundColor: "grey" }}></span> <span style={{ paddingTop: "10px", display: "inline-block" }}>Or</span> <span style={{ display: "inline-block", width: "220px", height: "2px", backgroundColor: "grey" }}></span>
                 </div>
                 <div style={{ width: "100%" }}>
-                    
+
                     <form onSubmit={popUpHandler}>
 
                         <div className="flex">

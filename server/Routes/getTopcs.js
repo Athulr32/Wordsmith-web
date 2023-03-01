@@ -24,7 +24,7 @@ router.use( verify, async (req, res) => {
     const email = decodedToken.email
     const topicReq = await wordsSchema.findOne({ email })
     const topics = topicReq.topics
-
+    console.log(topics)
     console.log('Sending')
     res.json({
         topics

@@ -1,9 +1,40 @@
+import { useEffect } from "react"
+import { getCookie } from "cookies-next"
+import Router from "next/router";
+
+
+
+export default function Login({ loginHandler, setLoginOff }) {
+
+
+    useEffect(() => {
+
+        const token = getCookie("token");
+        console.log(token)
+        if (token) {
+            fetch("http://localhost:4000/verify", {
+                headers: {
+                    "Content-Type": "application/json",
+
+                },
+                method: "POST",
+                body: JSON.stringify({
+                    token
+                })
+            }).then((res)=>{
+                return res.json();
+            }).then((data)=>{
+              
+                if(data.flag === true){
+                    Router.push("/dashboard")
+                }
+            })
+        }
 
 
 
 
-
-export default function Login({loginHandler}) {
+    }, [])
 
 
     return (
@@ -14,7 +45,7 @@ export default function Login({loginHandler}) {
                     <h1 style={{ fontSize: "30px", fontWeight: "bold", padding: "2px 2px 2px 0px" }}>Login</h1>
                 </div>
                 <div>
-                   New Here? <span >Sign Up</span>
+                    New Here? <span style={{ cursor: "pointer" }} onClick={() => { setLoginOff() }}>Sign Up</span>
                 </div>
                 <div style={{ padding: "10px 0px 10px 0px" }}>
                     Social Login
@@ -23,7 +54,7 @@ export default function Login({loginHandler}) {
                     <span style={{ display: "inline-block", width: "200px", height: "2px", backgroundColor: "grey" }}></span> <span style={{ paddingTop: "10px", display: "inline-block" }}>Or</span> <span style={{ display: "inline-block", width: "220px", height: "2px", backgroundColor: "grey" }}></span>
                 </div>
                 <div style={{ width: "100%" }}>
-                    <form >
+                    <form onSubmit={loginHandler}>
 
                         <div className="py-5">
                             <input placeholder="Email" style={{ backgroundColor: "#F3F6F8", padding: "10px", width: "100%", borderRadius: "6px" }} />
@@ -32,7 +63,7 @@ export default function Login({loginHandler}) {
 
                         <div>
 
-                            <input placeholder="Passowrd" style={{ backgroundColor: "#F3F6F8", padding: "10px", width: "100%", borderRadius: "6px" }} />
+                            <input placeholder="Password" style={{ backgroundColor: "#F3F6F8", padding: "10px", width: "100%", borderRadius: "6px" }} />
 
                         </div>
 

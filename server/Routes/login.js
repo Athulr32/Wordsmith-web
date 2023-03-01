@@ -16,9 +16,7 @@ router.use(async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    const user = new User({
-        email, password
-    })
+
 
     const finding = await User.findOne({ email, password })
 
@@ -32,7 +30,7 @@ router.use(async (req, res) => {
     }
     else {
         var token = jwt.sign({ email }, 'shhhhh');
-        console.log(token)
+      
         res.json({
             token,
             flag: true

@@ -128,7 +128,7 @@ router.use("",verify,async(req,res)=>{
     // console.log(wordsToDisplay)
 
     for(let i=0;i<wordsToDisplay.length;i++){
-        console.log(wordsToDisplay[i].word)
+        console.log(wordsToDisplay[i])
     }
 
     res.json({

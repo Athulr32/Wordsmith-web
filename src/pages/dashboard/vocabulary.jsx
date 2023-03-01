@@ -3,27 +3,165 @@ import Sidebar from "../../components/Sidebar";
 import { use, useEffect, useState } from "react";
 import closeButton from "../../../public/close.svg";
 import Image from "next/image";
+import axios from "axios";
+import { getCookie } from "cookies-next";
+import Router from "next/router";
 
 function vocabulary() {
+
   const [selected, setSelected] = useState([]);
   const [data, setData] = useState([]);
-  const [familiar,setFamiliar]= useState(0);
-  const [notFamiliar,setNotFamiliar]= useState(0);
+  const [familiar, setFamiliar] = useState(0);
+  const [notFamiliar, setNotFamiliar] = useState(0);
+  const [words, setWords] = useState([{ word: "", defs: [] }]);
+  const [count, setCount] = useState(0);
 
-  useEffect(()=>{
+  useEffect(() => {
     //fetch from database
     // const d = fetchfromdatabase();
-    const d=['hello','aaron','athul']
-    setData(d);
-  },[]);
 
-  function known(){
-    setFamiliar(familiar+1)
-    
+    const token = getCookie("token");
+    console.log(token)
+    if (token) {
+      fetch("http://localhost:4000/verify", {
+        headers: {
+          "Content-Type": "application/json",
+
+        },
+        method: "POST",
+        body: JSON.stringify({
+          token
+        })
+      }).then((res) => {
+        return res.json();
+      }).then((data) => {
+
+        if (data.flag !== true) {
+          Router.push("/")
+        }
+      })
+    }
+
+    fetch("http://localhost:4000/getTopics", {
+      headers: {
+        "Content-Type": "application/json",
+
+      },
+      method: "POST",
+      body: JSON.stringify({
+        token
+      })
+    }).then(res => {
+
+      return res.json()
+    }).then(datas => {
+      console.log(datas)
+      setData(datas.topics)
+
+
+    })
+
+
+    fetch("http://localhost:4000/getWords", {
+      headers: {
+        "Content-Type": "application/json",
+
+      },
+      method: "POST",
+      body: JSON.stringify({
+        token,
+      })
+    }).then(res => {
+
+      return res.json()
+    }).then(datas => {
+
+
+      setWords(datas.wordsToDisplay);
+
+      console.log(datas.wordsToDisplay)
+    })
+
+
+
+
+  }, []);
+
+
+
+  function refetchWords() {
+
+
+    if (count >= words.length - 2) {
+      setCount(0);
+      console.log("Refecthing")
+      const token = getCookie("token");
+      fetch("http://localhost:4000/getWords", {
+        headers: {
+          "Content-Type": "application/json",
+
+        },
+        method: "POST",
+        body: JSON.stringify({
+          token,
+        })
+      }).then(res => {
+
+        return res.json()
+      }).then(datas => {
+     
+        setWords(datas.wordsToDisplay);
+
+        console.log(datas.wordsToDisplay)
+      })
+
+
+
+    }
+
+
   }
 
-  function notknown(){
-    setNotFamiliar(notFamiliar+1)
+
+  function known() {
+
+    refetchWords()
+    setFamiliar(familiar + 1)
+
+    const token = getCookie("token");
+
+    fetch("http://localhost:4000/storeWords", {
+      headers: {
+        "Content-Type": "application/json",
+
+      },
+      method: "POST",
+      body: JSON.stringify({
+        token,
+        word: words[count]["word"]
+      })
+    }).then(res => {
+
+      return res.json()
+    }).then(datas => {
+
+      setCount(()=>{
+        return count + 1
+      })
+      console.log(datas.wordsToDisplay)
+    })
+
+
+
+
+    console.log(count)
+
+  }
+
+  function notknown() {
+    refetchWords()
+    setNotFamiliar(notFamiliar + 1)
+    setCount(count + 1)
   }
 
   // console.log(data);
@@ -72,16 +210,16 @@ function vocabulary() {
                 className='bg-white p-20 rounded-[20px] '
                 style={{ border: "solid 1px #D9E0E6" }}
               >
-                <p className='text-5xl font-bold mb-12'><span>Abnegation</span></p>
-                <p className='mb-20'>Renouncing a belief or doctrine</p>
-                <p>Example: “I believe in the abnegation of political power”</p>
+                <p className='text-5xl font-bold mb-12'><span>{words[count]["word"]?"fds":"fwds"}</span></p>
+                {/* <p className='mb-20'>{words[count].defs[0]?"No meaning":words[count].defs[0] }</p> */}
+
               </div>
               <div
                 className='flex justify-between '
                 style={{ margin: "auto", marginTop: 40 }}
               >
                 <button
-                onClick={known}
+                  onClick={known}
                   style={{
                     backgroundColor: "#039982",
                     padding: 13,
@@ -132,7 +270,7 @@ function vocabulary() {
               style={{ border: "solid 1px #D9E0E6" }}
             >
               <p className="mb-5 font-medium text-xl">Selected Interests</p>
-              <div className='flex  text-white' style={{flexWrap:"wrap", width:200}}>
+              <div className='flex  text-white' style={{ flexWrap: "wrap", width: 200 }}>
                 {selected.map((value, index) => {
                   return (
                     <button
@@ -157,23 +295,23 @@ function vocabulary() {
               </div>
               <hr className="mt-5"></hr>
               <p className="mb-5 mt-8 font-medium text-xl">Interests</p>
-              <div style={{flexWrap:"wrap", width:200}}>
-                {data.map((value)=>{
-                  return(
-                     <button
-                     onClick={addInterest}
-                     value={value}
-                     className='p-2 mr-5 mb-3 text-sm text-white'
-                     style={{ backgroundColor: "#00C1A2", borderRadius: "10px" }}
-                   >
-                     {value}
-                   </button>)
-                
+              <div style={{ flexWrap: "wrap", width: 200 }}>
+                {data.map((value) => {
+                  return (
+                    <button
+                      onClick={addInterest}
+                      value={value}
+                      className='p-2 mr-5 mb-3 text-sm text-white'
+                      style={{ backgroundColor: "#00C1A2", borderRadius: "10px" }}
+                    >
+                      {value}
+                    </button>)
+
                 })}
-           
+
 
               </div>
-             
+
             </div>
           </div>
         </div>

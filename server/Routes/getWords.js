@@ -122,7 +122,7 @@ router.use(verify, async (req, res) => {
     }
 
 
-    // console.log(wordsToDisplay)
+    console.log(wordsToDisplay)
 
     for(let i=0;i<wordsToDisplay.length;i++){
         console.log(wordsToDisplay[i].word)

@@ -4,11 +4,37 @@ import style from "./Interest.module.css";
 import Image from "next/image";
 
 import closeButton from "../../public/close.svg";
-
-export default function Interest() {
+import {
+    getCookie
+} from "cookies-next";
+import Router from "next/router";
+export default function Interest({ setLogin,details }) {
 
     const [interest, setInterest] = useState([])
 
+
+    async function storeTopic() {
+
+        details.topics = interest
+        const registerRequest = await fetch("http://localhost:4000/register", {
+            headers: {
+                "Content-Type": "application/json",
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            method: "POST",
+            body: JSON.stringify(details),
+
+        })
+
+        const userRegsiter = await registerRequest.json();
+        console.log(userRegsiter);
+
+        if(userRegsiter.flag === true){
+          
+            setLogin(true)
+        }
+
+    }
 
     function addInterest(e) {
 
@@ -23,24 +49,24 @@ export default function Interest() {
     }
 
 
-    function removeInterest(e){
+    function removeInterest(e) {
 
         console.log(e.currentTarget.value)
         setInterest(() => {
-          
+
             return (
-                interest.filter((value)=>{
-                    return value!=e.target.value
+                interest.filter((value) => {
+                    return value != e.target.value
                 })
             )
         })
-       
+
     }
 
-    function addUserInputInterest(e){
+    function addUserInputInterest(e) {
 
-        if(e.key == "Enter"){
-            
+        if (e.key == "Enter") {
+
             setInterest(() => {
                 if (interest.includes(e.target.value)) {
                     return (interest)
@@ -68,11 +94,11 @@ export default function Interest() {
                     <div className="my-10 px-5 py-10 border-solid border-grey border-2">
                         <div className="flex  text-white justify-start items-start">
                             {interest.map((value, index) => {
-                             
+
                                 return (
                                     <button onClick={removeInterest} value={value} className="p-2 mr-5 text-sm " style={{ backgroundColor: "#00C1A2", borderRadius: "10px" }} key={index}>
-                                        {value} <Image  style={{display:"inline-block",marginLeft:"2px"}} src={closeButton} alt="close"/>
-                                        </button>
+                                        {value} <Image style={{ display: "inline-block", marginLeft: "2px" }} src={closeButton} alt="close" />
+                                    </button>
                                 )
                             })}
                         </div>
@@ -87,7 +113,7 @@ export default function Interest() {
 
                     </div>
                     <div className="text-right">
-                        <button style={{ color: "#039982", padding: "5px 15px 5px 15px", borderRadius: "10px", border: "2px solid #039982", fontWeight: "bold" }}>Next</button>
+                        <button onClick={storeTopic} style={{ color: "#039982", padding: "5px 15px 5px 15px", borderRadius: "10px", border: "2px solid #039982", fontWeight: "bold" }}>Next</button>
                     </div>
                 </div>
 
