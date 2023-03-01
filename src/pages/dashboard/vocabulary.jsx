@@ -72,7 +72,7 @@ function vocabulary() {
                 className='bg-white p-20 rounded-[20px] '
                 style={{ border: "solid 1px #D9E0E6" }}
               >
-                <p className='text-5xl font-bold mb-12'>Abnegation</p>
+                <p className='text-5xl font-bold mb-12'><span>Abnegation</span></p>
                 <p className='mb-20'>Renouncing a belief or doctrine</p>
                 <p>Example: “I believe in the abnegation of political power”</p>
               </div>
