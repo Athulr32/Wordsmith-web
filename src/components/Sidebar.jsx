@@ -5,9 +5,9 @@ function Sidebar() {
     <div style={{width:"350px", backgroundColor:"white",height:"95vh",zIndex:1}} class="shadow-xl">
         <ul class="p-20 ml-6"d>
             <li class="mb-7"><Link href="/dashboard/vocabulary">Vocabulary Building</Link></li>
-            <li class="mb-7">Grammar Correction</li>
-            <li class="mb-7">Translation</li>
-            <li class="mb-7">Dictionary</li>
+            <li class="mb-7"><Link href="/dashboard/grammar">Grammar Correction</Link></li>
+            <li class="mb-7"><Link href="/dashboard/translation">Translation</Link></li>
+            <li class="mb-7"><Link href="/dashboard/dictionary">Dictionary</Link></li>
         </ul>
     </div>
   )

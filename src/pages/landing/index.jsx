@@ -3,7 +3,11 @@ import Footer from "../../components/Footer"
 import LandingScreen from "../../components/LandingScreen"
 import Navbar from "../../components/Navbar"
 
+
+
 function index() {
+
+
   return (
     <div >
     <Navbar/>
