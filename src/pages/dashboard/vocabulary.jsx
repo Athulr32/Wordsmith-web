@@ -7,6 +7,9 @@ import axios from "axios";
 import { getCookie } from "cookies-next";
 import Router from "next/router";
 
+import SidebarHindi from "../../components/HindiComponents/SidebarHindi";
+import NavbarHindi from "../../components/HindiComponents/NavbarHindi";
+
 function vocabulary() {
 
   const [loading, setLoading] = useState(true);
@@ -16,10 +19,14 @@ function vocabulary() {
   const [notFamiliar, setNotFamiliar] = useState(0);
   const [words, setWords] = useState([{ word: "", defs: [] }]);
   const [count, setCount] = useState(0);
+  const [language,setLanguage] = useState("English");
 
   useEffect(() => {
     //fetch from database
     // const d = fetchfromdatabase();
+
+    const lang = getCookie("language")
+    setLanguage(lang)
     setLoading(true)
 
     const token = getCookie("token");
@@ -58,9 +65,9 @@ function vocabulary() {
           }).then(datas => {
             console.log(datas)
             setData(datas.topics)
-          
+
             if (selected.length > 0) {
-              console.log("selected",selected.length)
+              console.log("selected", selected.length)
               fetchWordsBasedOnTopics()
             } else {
               fetch("http://localhost:4000/getWords", {
@@ -111,7 +118,7 @@ function vocabulary() {
     setCount(0);
     setLoading(true)
     const token = getCookie("token");
-    
+
     fetch("http://localhost:4000/getWordsFromTopic", {
       headers: {
         "Content-Type": "application/json",
@@ -129,11 +136,11 @@ function vocabulary() {
     }).then(datas => {
       console.log
 
-      setWords(()=>{
+      setWords(() => {
         return datas.wordsToDisplay
       });
 
-      setLoading(()=>{
+      setLoading(() => {
         return false
       })
     })
@@ -257,9 +264,9 @@ function vocabulary() {
 
   return (
     <div>
-      <Navbar />
+      {language === "Hindi" ? <NavbarHindi /> : <Navbar />}
       <div className='flex'>
-        <Sidebar />
+        {language === "Hindi" ? <SidebarHindi /> : <Sidebar />}
         <div
           style={{
             backgroundImage: "url('/texture.png')",
@@ -368,9 +375,10 @@ function vocabulary() {
               <hr className="mt-5"></hr>
               <p className="mb-5 mt-8 font-medium text-xl">Interests</p>
               <div style={{ flexWrap: "wrap", width: 200 }}>
-                {data.map((value) => {
+                {data.map((value,index) => {
                   return (
                     <button
+                    key={index}
                       onClick={addInterest}
                       value={value}
                       className='p-2 mr-5 mb-3 text-sm text-white'

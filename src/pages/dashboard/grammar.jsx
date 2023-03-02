@@ -1,22 +1,28 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Navbar from "../../components/Navbar"
 import Sidebar from "../../components/Sidebar"
 import axios from "axios";
 import { Button } from "@mui/material";
 import { getCookie } from "cookies-next";
+import SidebarHindi from "../../components/HindiComponents/SidebarHindi";
+import NavbarHindi from "../../components/HindiComponents/NavbarHindi";
 function grammar() {
 
   const [question, setQuestion] = useState("Tell us a bit about yourself");
   const [count, setCount] = useState(0)
   const [userInput, setUserInput] = useState("")
   const [error, setErrors] = useState([])
-
+  const [language,setLanguage] = useState("English")
   const handleChange = (event) => {
     setUserInput(event.target.value);
   };
 
 
+  useEffect(()=>{
+    const lang = getCookie("language")
+    setLanguage(lang)
 
+  },[])
   const questionlist = ["Tell us a bit about your favourite sport", "Tell us a bit about your favourite pet animal", "How did you celebrate your last Birthday ?", "Tell us a bit about your Hometown", "Tell us a bit about your favourite tourist destination", "Tell us a bit about your favourite Food"]
 
   function questionHandler() {
@@ -48,9 +54,9 @@ function grammar() {
 
   return (
     <div>
-      <Navbar />
+     {language === "Hindi"? <NavbarHindi />: <Navbar/>}
       <div className='flex'>
-        <Sidebar />
+      {language === "Hindi"? <SidebarHindi />: <Sidebar/>}
         <div
           style={{
             backgroundImage: "url('/texture.png')",

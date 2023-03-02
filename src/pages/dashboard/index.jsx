@@ -5,7 +5,8 @@ import { useEffect } from 'react'
 import Router from 'next/router'
 import { getCookie } from 'cookies-next'
 import { Doughnut } from 'react-chartjs-2';
-
+import SidebarHindi from "../../components/HindiComponents/SidebarHindi";
+import NavbarHindi from "../../components/HindiComponents/NavbarHindi";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -101,10 +102,12 @@ function index() {
   };
 
 
+  const [language, setLanguage] = useState("English");
 
 
   useEffect(() => {
-
+    const lang = getCookie("language");
+    setLanguage(lang);
     const token = getCookie("token");
     console.log(token)
     if (token) {
@@ -155,27 +158,28 @@ function index() {
 
 
 
+
   }, [])
 
 
 
   return (
     <div>
-      <Navbar />
+      {language === "Hindi" ? <NavbarHindi /> : <Navbar />}
       <div className='flex'>
-        <Sidebar />
+        {language === "Hindi" ? <SidebarHindi /> : <Sidebar />}
         <div style={{ backgroundImage: "url('/texture.png')", backgroundRepeat: 'repeat', flex: 1 }}>
 
           <p className='p-20 text-xl font-bold'>Weekly Activity</p>
 
-          <div className='flex' style={{ marginLeft: 0, marginTop: -20, marginBottom: 20,justifyContent:"space-around" , marginRight:300}}>
-            <div style={{ height: 400, width:"700px"}}><Line options={options} data={data} /></div>
+          <div className='flex' style={{ marginLeft: 0, marginTop: -20, marginBottom: 20, justifyContent: "space-around", marginRight: 300 }}>
+            <div style={{ height: 400, width: "700px" }}><Line options={options} data={data} /></div>
 
             <div style={{ height: 400, marginLeft: 0, }}><Doughnut data={data2} /></div>
           </div>
 
-          <p className='text-xl font-bold ml-20' style={{marginBottom:120}}>Section wise Progress</p>
-          <div style={{ display: "flex" ,marginTop:-70 , marginLeft:50}}>
+          <p className='text-xl font-bold ml-20' style={{ marginBottom: 120 }}>Section wise Progress</p>
+          <div style={{ display: "flex", marginTop: -70, marginLeft: 50 }}>
 
             <div style={{ padding: "30px", width: "400px", backgroundColor: "white", marginLeft: "30px", borderRadius: 10, border: "solid 1px #D9E0E6" }}>
               <div style={{ padding: "0px 0px 30px 0px", fontSize: 16, fontWeight: "bold" }}> Vocab progress</div>
@@ -193,7 +197,7 @@ function index() {
               </div>
 
             </div>
-            
+
             <div style={{ padding: "30px", width: "400px", backgroundColor: "white", marginLeft: "30px", borderRadius: 10, border: "solid 1px #D9E0E6" }}>
               <div style={{ padding: "0px 0px 30px 0px", fontSize: 16, fontWeight: "bold" }}> Vocab progress</div>
 
@@ -202,8 +206,8 @@ function index() {
               </div>
 
             </div>
-            
-            
+
+
 
           </div>
 
