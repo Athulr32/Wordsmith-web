@@ -4,16 +4,23 @@ import Image from "next/image"
 import logo from "../../public/logo.svg";
 import { useState } from "react";
 
-export default function Entry() {
+export default function Entry({lang}) {
 
-    const [language, setLanguage] = useState(null);
+    const [language, setLanguage] = useState("Hindi");
 
 
     function languageHandler(e) {
 
         setLanguage(e.target.value)
+            
+
+    }
 
 
+    function setLang(e){
+        e.preventDefault()
+  
+        lang(language);
     }
 
     return (
@@ -52,7 +59,7 @@ export default function Entry() {
                                 </div>
 
                                 <div className="my-20 text-center">
-                                    <button style={{ backgroundColor: "#00C1A2", padding: "10px", width: "100%", color: "white" }}>Submit</button>
+                                    <button onClick={setLang} style={{ backgroundColor: "#00C1A2", padding: "10px", width: "100%", color: "white" }}>Submit</button>
                                 </div>
                             </form>
                         </div>

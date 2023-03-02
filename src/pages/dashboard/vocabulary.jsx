@@ -3,27 +3,233 @@ import Sidebar from "../../components/Sidebar";
 import { use, useEffect, useState } from "react";
 import closeButton from "../../../public/close.svg";
 import Image from "next/image";
+import axios from "axios";
+import { getCookie } from "cookies-next";
+import Router from "next/router";
 
 function vocabulary() {
+
+  const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState([]);
   const [data, setData] = useState([]);
-  const [familiar,setFamiliar]= useState(0);
-  const [notFamiliar,setNotFamiliar]= useState(0);
+  const [familiar, setFamiliar] = useState(0);
+  const [notFamiliar, setNotFamiliar] = useState(0);
+  const [words, setWords] = useState([{ word: "", defs: [] }]);
+  const [count, setCount] = useState(0);
 
-  useEffect(()=>{
+  useEffect(() => {
     //fetch from database
     // const d = fetchfromdatabase();
-    const d=['hello','aaron','athul']
-    setData(d);
-  },[]);
+    setLoading(true)
 
-  function known(){
-    setFamiliar(familiar+1)
+    const token = getCookie("token");
+    console.log(token)
+    if (token) {
+      fetch("http://localhost:4000/verify", {
+        headers: {
+          "Content-Type": "application/json",
+
+        },
+        method: "POST",
+        body: JSON.stringify({
+          token
+        })
+      }).then((res) => {
+        return res.json();
+      }).then((data) => {
+
+        if (data.flag !== true) {
+          Router.push("/")
+        }
+        else {
+
+          fetch("http://localhost:4000/getTopics", {
+            headers: {
+              "Content-Type": "application/json",
+
+            },
+            method: "POST",
+            body: JSON.stringify({
+              token
+            })
+          }).then(res => {
+
+            return res.json()
+          }).then(datas => {
+            console.log(datas)
+            setData(datas.topics)
+          
+            if (selected.length > 0) {
+              console.log("selected",selected.length)
+              fetchWordsBasedOnTopics()
+            } else {
+              fetch("http://localhost:4000/getWords", {
+                headers: {
+                  "Content-Type": "application/json",
+
+                },
+                method: "POST",
+                body: JSON.stringify({
+                  token,
+                })
+              }).then(res => {
+
+                return res.json()
+              }).then(datas => {
+
+
+                setWords(datas.wordsToDisplay);
+
+                setLoading(false)
+              })
+
+            }
+
+          })
+
+
+
+
+        }
+
+
+
+      })
+    }
+
+
+
+
+
+
+
+  }, [selected]);
+
+
+  function fetchWordsBasedOnTopics() {
+
+    setCount(0);
+    setLoading(true)
+    const token = getCookie("token");
     
+    fetch("http://localhost:4000/getWordsFromTopic", {
+      headers: {
+        "Content-Type": "application/json",
+
+      },
+      method: "POST",
+      body: JSON.stringify({
+        token,
+        topic: selected
+      })
+    }).then(res => {
+
+      return res.json()
+
+    }).then(datas => {
+      console.log
+
+      setWords(()=>{
+        return datas.wordsToDisplay
+      });
+
+      setLoading(()=>{
+        return false
+      })
+    })
+
   }
 
-  function notknown(){
-    setNotFamiliar(notFamiliar+1)
+
+  function refetchWords() {
+
+
+    if (count >= words.length - 2) {
+      if (selected.length > 0) {
+        fetchWordsBasedOnTopics();
+        return;
+      }
+      setCount(0);
+      setLoading(true)
+      console.log("Refecthing")
+      const token = getCookie("token");
+      fetch("http://localhost:4000/getWords", {
+        headers: {
+          "Content-Type": "application/json",
+
+        },
+        method: "POST",
+        body: JSON.stringify({
+          token,
+        })
+      }).then(res => {
+
+        return res.json()
+      }).then(datas => {
+
+        setWords(datas.wordsToDisplay);
+        setLoading(false)
+        console.log(datas.wordsToDisplay)
+      })
+
+
+
+    }
+
+
+  }
+
+
+  function known() {
+
+    if (loading) {
+      return;
+    }
+    const token = getCookie("token");
+    fetch("http://localhost:4000/storeWords", {
+      headers: {
+        "Content-Type": "application/json",
+
+      },
+      method: "POST",
+      body: JSON.stringify({
+        token,
+        word: words[count]["word"]
+      })
+    }).then(res => {
+
+      return res.json()
+    }).then(datas => {
+
+      setCount(() => {
+        return count + 1
+      })
+
+
+      setFamiliar(familiar + 1)
+
+      refetchWords()
+
+      console.log(datas.wordsToDisplay)
+    })
+
+
+
+
+  }
+
+  function notknown() {
+    if (loading) {
+      return;
+    }
+    setNotFamiliar(notFamiliar + 1)
+    setCount(() => {
+      return count + 1
+    })
+
+    refetchWords()
+
+
   }
 
   // console.log(data);
@@ -35,6 +241,9 @@ function vocabulary() {
       }
       return [...selected, e.target.value];
     });
+
+
+
   }
 
   function removeInterest(e) {
@@ -72,16 +281,16 @@ function vocabulary() {
                 className='bg-white p-20 rounded-[20px] '
                 style={{ border: "solid 1px #D9E0E6" }}
               >
-                <p className='text-5xl font-bold mb-12'>Abnegation</p>
-                <p className='mb-20'>Renouncing a belief or doctrine</p>
-                <p>Example: “I believe in the abnegation of political power”</p>
+                <p className='text-5xl font-bold mb-12'><span>{loading ? "Loading" : words[count]["word"]}</span></p>
+                <p className='mb-20'>{loading ? "Loading " : words[count].defs}</p>
+
               </div>
               <div
                 className='flex justify-between '
                 style={{ margin: "auto", marginTop: 40 }}
               >
                 <button
-                onClick={known}
+                  onClick={known}
                   style={{
                     backgroundColor: "#039982",
                     padding: 13,
@@ -127,12 +336,13 @@ function vocabulary() {
                 </div>
               </div>
             </div>
+
             <div
               className='bg-white p-10 rounded-[20px] mt-20 mr-20 flex-col'
               style={{ border: "solid 1px #D9E0E6" }}
             >
               <p className="mb-5 font-medium text-xl">Selected Interests</p>
-              <div className='flex  text-white' style={{flexWrap:"wrap", width:200}}>
+              <div className='flex  text-white' style={{ flexWrap: "wrap", width: 200 }}>
                 {selected.map((value, index) => {
                   return (
                     <button
@@ -157,23 +367,23 @@ function vocabulary() {
               </div>
               <hr className="mt-5"></hr>
               <p className="mb-5 mt-8 font-medium text-xl">Interests</p>
-              <div style={{flexWrap:"wrap", width:200}}>
-                {data.map((value)=>{
-                  return(
-                     <button
-                     onClick={addInterest}
-                     value={value}
-                     className='p-2 mr-5 mb-3 text-sm text-white'
-                     style={{ backgroundColor: "#00C1A2", borderRadius: "10px" }}
-                   >
-                     {value}
-                   </button>)
-                
+              <div style={{ flexWrap: "wrap", width: 200 }}>
+                {data.map((value) => {
+                  return (
+                    <button
+                      onClick={addInterest}
+                      value={value}
+                      className='p-2 mr-5 mb-3 text-sm text-white'
+                      style={{ backgroundColor: "#00C1A2", borderRadius: "10px" }}
+                    >
+                      {value}
+                    </button>)
+
                 })}
-           
+
 
               </div>
-             
+
             </div>
           </div>
         </div>
