@@ -92,7 +92,7 @@ router.use(verify, async (req, res) => {
                         flag=true
                         words.splice(i, 1);
 
-                        console.log(words)
+                    
                         break;
                     }
                 }
@@ -122,12 +122,17 @@ router.use(verify, async (req, res) => {
     }
 
 
+   wordsToDisplay = wordsToDisplay.filter((value,index)=>{
+        if(value.defs !==undefined){
+            return value
+        }
+    })
+
+    wordsToDisplay = wordsToDisplay.map((value,index)=>{
+            return {word:value.word,defs:value.defs[0]}
+    })
+
     console.log(wordsToDisplay)
-
-    for(let i=0;i<wordsToDisplay.length;i++){
-        console.log(wordsToDisplay[i].word)
-    }
-
     res.json({
         wordsToDisplay
     })

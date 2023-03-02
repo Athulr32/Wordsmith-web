@@ -127,9 +127,15 @@ router.use("",verify,async(req,res)=>{
 
     // console.log(wordsToDisplay)
 
-    for(let i=0;i<wordsToDisplay.length;i++){
-        console.log(wordsToDisplay[i])
-    }
+    wordsToDisplay = wordsToDisplay.filter((value,index)=>{
+        if(value.defs !==undefined){
+            return value
+        }
+    })
+
+    // for(let i=0;i<wordsToDisplay.length;i++){
+    //     console.log(wordsToDisplay[i])
+    // }
 
     res.json({
         wordsToDisplay

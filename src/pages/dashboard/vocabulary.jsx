@@ -9,6 +9,7 @@ import Router from "next/router";
 
 function vocabulary() {
 
+  const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState([]);
   const [data, setData] = useState([]);
   const [familiar, setFamiliar] = useState(0);
@@ -19,6 +20,7 @@ function vocabulary() {
   useEffect(() => {
     //fetch from database
     // const d = fetchfromdatabase();
+    setLoading(true)
 
     const token = getCookie("token");
     console.log(token)
@@ -39,30 +41,78 @@ function vocabulary() {
         if (data.flag !== true) {
           Router.push("/")
         }
+        else {
+
+          fetch("http://localhost:4000/getTopics", {
+            headers: {
+              "Content-Type": "application/json",
+
+            },
+            method: "POST",
+            body: JSON.stringify({
+              token
+            })
+          }).then(res => {
+
+            return res.json()
+          }).then(datas => {
+            console.log(datas)
+            setData(datas.topics)
+          
+            if (selected.length > 0) {
+              console.log("selected",selected.length)
+              fetchWordsBasedOnTopics()
+            } else {
+              fetch("http://localhost:4000/getWords", {
+                headers: {
+                  "Content-Type": "application/json",
+
+                },
+                method: "POST",
+                body: JSON.stringify({
+                  token,
+                })
+              }).then(res => {
+
+                return res.json()
+              }).then(datas => {
+
+
+                setWords(datas.wordsToDisplay);
+
+                setLoading(false)
+              })
+
+            }
+
+          })
+
+
+
+
+        }
+
+
+
       })
     }
 
-    fetch("http://localhost:4000/getTopics", {
-      headers: {
-        "Content-Type": "application/json",
-
-      },
-      method: "POST",
-      body: JSON.stringify({
-        token
-      })
-    }).then(res => {
-
-      return res.json()
-    }).then(datas => {
-      console.log(datas)
-      setData(datas.topics)
 
 
-    })
 
 
-    fetch("http://localhost:4000/getWords", {
+
+
+  }, [selected]);
+
+
+  function fetchWordsBasedOnTopics() {
+
+    setCount(0);
+    setLoading(true)
+    const token = getCookie("token");
+    
+    fetch("http://localhost:4000/getWordsFromTopic", {
       headers: {
         "Content-Type": "application/json",
 
@@ -70,30 +120,37 @@ function vocabulary() {
       method: "POST",
       body: JSON.stringify({
         token,
+        topic: selected
       })
     }).then(res => {
 
       return res.json()
+
     }).then(datas => {
+      console.log
 
+      setWords(()=>{
+        return datas.wordsToDisplay
+      });
 
-      setWords(datas.wordsToDisplay);
-
-      console.log(datas.wordsToDisplay)
+      setLoading(()=>{
+        return false
+      })
     })
 
-
-
-
-  }, []);
-
+  }
 
 
   function refetchWords() {
 
 
     if (count >= words.length - 2) {
+      if (selected.length > 0) {
+        fetchWordsBasedOnTopics();
+        return;
+      }
       setCount(0);
+      setLoading(true)
       console.log("Refecthing")
       const token = getCookie("token");
       fetch("http://localhost:4000/getWords", {
@@ -109,9 +166,9 @@ function vocabulary() {
 
         return res.json()
       }).then(datas => {
-     
-        setWords(datas.wordsToDisplay);
 
+        setWords(datas.wordsToDisplay);
+        setLoading(false)
         console.log(datas.wordsToDisplay)
       })
 
@@ -125,11 +182,10 @@ function vocabulary() {
 
   function known() {
 
-    refetchWords()
-    setFamiliar(familiar + 1)
-
+    if (loading) {
+      return;
+    }
     const token = getCookie("token");
-
     fetch("http://localhost:4000/storeWords", {
       headers: {
         "Content-Type": "application/json",
@@ -145,23 +201,35 @@ function vocabulary() {
       return res.json()
     }).then(datas => {
 
-      setCount(()=>{
+      setCount(() => {
         return count + 1
       })
+
+
+      setFamiliar(familiar + 1)
+
+      refetchWords()
+
       console.log(datas.wordsToDisplay)
     })
 
 
 
 
-    console.log(count)
-
   }
 
   function notknown() {
-    refetchWords()
+    if (loading) {
+      return;
+    }
     setNotFamiliar(notFamiliar + 1)
-    setCount(count + 1)
+    setCount(() => {
+      return count + 1
+    })
+
+    refetchWords()
+
+
   }
 
   // console.log(data);
@@ -173,6 +241,9 @@ function vocabulary() {
       }
       return [...selected, e.target.value];
     });
+
+
+
   }
 
   function removeInterest(e) {
@@ -210,8 +281,8 @@ function vocabulary() {
                 className='bg-white p-20 rounded-[20px] '
                 style={{ border: "solid 1px #D9E0E6" }}
               >
-                <p className='text-5xl font-bold mb-12'><span>{words[count]["word"]?"fds":"fwds"}</span></p>
-                {/* <p className='mb-20'>{words[count].defs[0]?"No meaning":words[count].defs[0] }</p> */}
+                <p className='text-5xl font-bold mb-12'><span>{loading ? "Loading" : words[count]["word"]}</span></p>
+                <p className='mb-20'>{loading ? "Loading " : words[count].defs}</p>
 
               </div>
               <div
@@ -265,6 +336,7 @@ function vocabulary() {
                 </div>
               </div>
             </div>
+
             <div
               className='bg-white p-10 rounded-[20px] mt-20 mr-20 flex-col'
               style={{ border: "solid 1px #D9E0E6" }}
