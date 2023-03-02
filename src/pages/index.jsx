@@ -1,5 +1,6 @@
 
-import Auth from "@/components/Auth/Auth.jsx"
+import AuthHindi from "@/components/AuthHindi/Auth.jsx"
+import AuthEnglish from "@/components/AuthEnglish/Auth.jsx"
 import Entry from '@/components/Entry.jsx';
 import Interest from "@/components/Interest.jsx"
 import { useState } from "react";
@@ -16,12 +17,13 @@ export default function Home() {
     setGotLang(true)
 
   }
-
+  console.log(language)
   return (
 
+  
     <div style={{ height: "100%", overflow: "hidden" }}>
       {!gotLang && <Entry lang={languageHandler}></Entry>}
-      {gotLang && <Auth lang={language} ></Auth>}
+      {gotLang && language==="English"?<AuthEnglish lang={language} ></AuthEnglish>:<AuthHindi lang={language} ></AuthHindi>}
 
 
     </div>

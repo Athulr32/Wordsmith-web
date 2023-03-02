@@ -52,7 +52,7 @@ export default function Entry({lang}) {
                                     <select required onChange={languageHandler} id="countries" multiple className="border border-gray-300  text-sm rounded-lg  block w-full p-2.5 " style={{ backgroundColor: "#F3F6F8" }}>
 
                                         <option style={{ padding: "5px", textAlign: 'center' }} value="English">English</option>
-                                        <option style={{ padding: "5px", textAlign: 'center' }} value="Hinid">Hindi</option>
+                                        <option style={{ padding: "5px", textAlign: 'center' }} value="Hindi">Hindi</option>
                                         <option style={{ padding: "5px", textAlign: 'center' }} value="Malayalam">Malayalam</option>
                                         <option style={{ padding: "5px", textAlign: 'center' }} value="Tamil">Tamil</option>
                                     </select>

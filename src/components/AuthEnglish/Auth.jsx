@@ -6,8 +6,8 @@ import { useState } from "react";
 import styles from "./SigIn.module.css";
 import Router from "next/router";
 import Interest from "../Interest.jsx";
-import Login from "@/components/Auth/Login.jsx";
-import SignUp from "@/components/Auth/SignUp.jsx"
+import Login from "@/components/AuthEnglish/Login.jsx";
+import SignUp from "@/components/AuthEnglish/SignUp.jsx"
 import { setCookie } from 'cookies-next';
 
 export default function SignIn({ lang }) {

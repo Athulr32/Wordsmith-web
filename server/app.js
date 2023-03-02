@@ -45,7 +45,9 @@ app.use("/", (req, res) => {
     res.send("Hello")
 })
 
-mongoose.connect("mongodb+srv://Athul:Athulrithu%40123@cluster0.qhzaz.mongodb.net/?retryWrites=true&w=majority").then(result => {
+//mongodb+srv://Athul:Athulrithu%40123@cluster0.qhzaz.mongodb.net/?retryWrites=true&w=majority
+
+mongoose.connect("mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.8.0").then(result => {
     console.log("Conncted")
     app.listen(PORT);
 }).catch(

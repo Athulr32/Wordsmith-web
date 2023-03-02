@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 function Navbar() {
   return (
-    <div className="shadow-xl " style={{zIndex:1}} >
+    <div className="shadow-xl " style={{zIndex:2,position:"relative"}} >
       <div className="flex flex-row justify-between items-center" >
         <img src="/logo.png" style={{height:30, marginLeft:40}} alt="no image"/>
         <div className="flex flex-row p-3 items-center">
