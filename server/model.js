@@ -34,7 +34,8 @@ const wordsSchema = new Schema({
     },
     hard: {
         type: Number
-    }
+    },
+    
 
 
 })
