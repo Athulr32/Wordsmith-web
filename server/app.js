@@ -20,6 +20,7 @@ const getWords = require("./Routes/getWords");
 const getWordsFromTopic = require("./Routes/getWordsFromTopic");
 const translation = require("./Routes/translation");
 const verify = require("./Routes/verify")
+const grammarCorrection = require("./Routes/grammarCorrection")
 
 app.use(cors())
 app.use(express.static(__dirname))
@@ -36,6 +37,9 @@ app.use("/getWords",getWords);
 app.use("/getWordsFromTopic",getWordsFromTopic);
 app.use("/verify",verify)
 app.use("/translate",translation)
+app.use("/grammarCorrection",grammarCorrection)
+
+
 
 app.use("/", (req, res) => {
     res.send("Hello")
