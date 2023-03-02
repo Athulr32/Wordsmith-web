@@ -10,7 +10,7 @@ function Navbar() {
         <p className="mx-5 hover:font-medium hover:text-[#039982] hover:cursor-pointer " ><Link href="/landing">Home</Link></p>
         <p className="mx-5 hover:font-medium hover:text-[#039982] hover:cursor-pointer"><Link href="/dashboard">Dashboard</Link></p>
         <p className="mx-5 hover:font-medium hover:text-[#039982] hover:cursor-pointer">Your Activities</p>
-        <p className="mx-5 hover:font-medium hover:text-[#039982] hover:cursor-pointer">About us</p>
+        <p className="mx-5 hover:font-medium hover:text-[#039982] hover:cursor-pointer"><Link href="/about">About us</Link></p>
         <p className="mx-5 hover:font-medium hover:text-[#039982] hover:cursor-pointer"><Link href="/dashboard">Donate</Link></p>
         <div className="mx-10"><Avatar src=""/></div>
         </div>
