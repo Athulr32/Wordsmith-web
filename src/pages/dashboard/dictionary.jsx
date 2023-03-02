@@ -2,6 +2,7 @@ import { useState } from "react"
 import Navbar from "../../components/Navbar"
 import { Button } from "@mui/material"
 import Sidebar from "../../components/Sidebar"
+import { relative } from "path";
 
 
 function dictionary() {
@@ -20,7 +21,6 @@ const handleSubmit = async (event) => {
     // const da=d[0].meanings[0].definitions[1].definition;
     // console.log(d[0])
     // console.log(d[0]);
-
     setData(d);
     setAudio(d[0].phonetics[0].audio)
     setClicked(true);
