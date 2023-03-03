@@ -42,7 +42,7 @@ export default function Entry({lang}) {
                             <form>
                                 <div >
                                     <div className="my-4">Lets start with your name</div>
-                                    <input required placeholder="Email" style={{ backgroundColor: "#F3F6F8", padding: "10px", width: "100%", borderRadius: "6px" }} />
+                                    <input required placeholder="Name" style={{ backgroundColor: "#F3F6F8", padding: "10px", width: "100%", borderRadius: "6px" }} />
                                 </div>
 
                                 <div className="my-4">
