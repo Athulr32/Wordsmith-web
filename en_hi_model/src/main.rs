@@ -73,7 +73,7 @@ async fn main() -> anyhow::Result<()> {
         .layer(cors);
 
     // run it with hyper on localhost:3000
-    axum::Server::bind(&"0.0.0.0:4000".parse().unwrap())
+    axum::Server::bind(&"0.0.0.0:5000".parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();

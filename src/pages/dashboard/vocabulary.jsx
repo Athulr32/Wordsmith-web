@@ -10,8 +10,41 @@ import Router from "next/router";
 import SidebarHindi from "../../components/HindiComponents/SidebarHindi";
 import NavbarHindi from "../../components/HindiComponents/NavbarHindi";
 
+
+
+
+
 function vocabulary() {
 
+
+  async function translate(e) {
+
+    console.log(e.currentTarget.innerHTML)
+
+    try {
+      const reqs = await fetch("http://localhost:5000/translate", {
+        headers: {
+          "Content-Type": "application/json",
+
+        },
+        method: "POST",
+        body: JSON.stringify({
+          data: e.currentTarget.innerHTML
+        })
+      })
+
+      const translatedWord = await reqs.json();
+      setTranslatedWord(translatedWord.data)
+    }
+    catch (e) {
+
+    }
+
+
+
+  }
+
+  const [translatedWord, setTranslatedWord] = useState("")
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState([]);
   const [data, setData] = useState([]);
@@ -19,7 +52,7 @@ function vocabulary() {
   const [notFamiliar, setNotFamiliar] = useState(0);
   const [words, setWords] = useState([{ word: "", defs: [] }]);
   const [count, setCount] = useState(0);
-  const [language,setLanguage] = useState("English");
+  const [language, setLanguage] = useState("English");
 
   useEffect(() => {
     //fetch from database
@@ -68,7 +101,12 @@ function vocabulary() {
 
             if (selected.length > 0) {
               console.log("selected", selected.length)
-              fetchWordsBasedOnTopics()
+              try {
+                fetchWordsBasedOnTopics()
+              }
+              catch(e){
+                
+              }
             } else {
               fetch("http://localhost:4000/getWords", {
                 headers: {
@@ -86,7 +124,7 @@ function vocabulary() {
 
 
                 setWords(datas.wordsToDisplay);
-
+                console.log(datas.wordsToDisplay)
                 setLoading(false)
               })
 
@@ -275,6 +313,7 @@ function vocabulary() {
           }}
         >
           <div style={{ display: "flex" }}>
+            <div>{translatedWord}</div>
             <div
               style={{
                 margin: "auto",
@@ -288,8 +327,8 @@ function vocabulary() {
                 className='bg-white p-20 rounded-[20px] '
                 style={{ border: "solid 1px #D9E0E6" }}
               >
-                <p className='text-5xl font-bold mb-12'><span>{loading ? "Loading" : words[count]["word"]}</span></p>
-                <p className='mb-20'>{loading ? "Loading " : words[count].defs}</p>
+                <p className='text-5xl font-bold mb-12'><span onMouseEnter={translate}>{loading ? "Loading" : words[count]["word"]? words[count]["word"]:""}</span></p>
+                <p className='mb-20' onMouseEnter={translate}>{loading ? "Loading " : words[count].defs?words[count].defs:""}</p>
 
               </div>
               <div
@@ -375,10 +414,10 @@ function vocabulary() {
               <hr className="mt-5"></hr>
               <p className="mb-5 mt-8 font-medium text-xl">Interests</p>
               <div style={{ flexWrap: "wrap", width: 200 }}>
-                {data.map((value,index) => {
+                {data.map((value, index) => {
                   return (
                     <button
-                    key={index}
+                      key={index}
                       onClick={addInterest}
                       value={value}
                       className='p-2 mr-5 mb-3 text-sm text-white'
