@@ -8,7 +8,7 @@ function Sidebar() {
   return (
     <div style={{width:"350px", backgroundColor:"white",height:"95vh",zIndex:1,position:"relative"}} className="shadow-xl">
         <ul className="p-20 ml-6"d>
-        <li className="mb-7"><Link href="/dashboard/introduction">Introduction</Link></li>
+        {/* <li className="mb-7"><Link href="/dashboard/introduction">Introduction</Link></li> */}
 
      
 

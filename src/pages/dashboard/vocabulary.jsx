@@ -303,6 +303,7 @@ function vocabulary() {
   return (
     <div>
       {language === "Hindi" ? <NavbarHindi /> : <Navbar />}
+      <div style={{display:"block",textAlign:'center',padding:"30px",backgroundColor:"white"}}>{translatedWord}</div>
       <div className='flex'>
         {language === "Hindi" ? <SidebarHindi /> : <Sidebar />}
         <div
@@ -312,8 +313,9 @@ function vocabulary() {
             flex: 1,
           }}
         >
+           
           <div style={{ display: "flex" }}>
-            <div>{translatedWord}</div>
+          
             <div
               style={{
                 margin: "auto",
